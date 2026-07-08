@@ -3,7 +3,6 @@ import type { Cookies } from '@sveltejs/kit';
 
 import { getRequestEvent } from '$app/server';
 
-
 type GetCookieConfig = Parameters<Cookies['get']>[1];
 type CookieConfig = Parameters<Cookies['set']>[2];
 
@@ -13,7 +12,7 @@ export type Hardtack<O> = {
 	 * @returns {Promise<O | undefined>}
 	 * @throws {StandardSchemaV1.Issue[]}
 	 */
-	get(): Promise<O | undefined>;
+	get(config?: GetCookieConfig): Promise<O | undefined>;
 
 	/**
 	 * Get the value from the cookie store. Uses the fallback if the value is missing. Throws on validation error.
@@ -21,7 +20,7 @@ export type Hardtack<O> = {
 	 * @returns {Promise<O>}
 	 * @throws {StandardSchemaV1.Issue[]}
 	 */
-	get(fallbackIfMissing: O): Promise<O>;
+	get(fallbackIfMissing: O, config?: GetCookieConfig): Promise<O>;
 
 	/**
 	 * Sets the value in the cookie store. Throws on validation error.
@@ -35,13 +34,13 @@ export type Hardtack<O> = {
 	 * Checks if the cookie store has the key. Validation is not performed.
 	 * @returns {Promise<boolean>}
 	 */
-	has(): Promise<boolean>;
+	has(config?: GetCookieConfig): Promise<boolean>;
 
 	/**
 	 * Deletes the key from the cookie store. Validation is not performed.
 	 * @returns {Promise<void>}
 	 */
-	delete(): Promise<void>;
+	delete(config?: CookieConfig): Promise<void>;
 };
 
 type HardtackInput = Record<string, StandardSchemaV1<string> | Codec<unknown>>;
