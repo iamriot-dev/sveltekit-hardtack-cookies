@@ -37,6 +37,12 @@ export type Hardtack<O> = {
 	has(config?: GetCookieConfig): Promise<boolean>;
 
 	/**
+	 * Checks if the cookie store has the key. Validation is performed.
+	 * @returns {Promise<boolean>}
+	 */
+	hasValid(config?: GetCookieConfig): Promise<boolean>;
+
+	/**
 	 * Deletes the key from the cookie store. Validation is not performed.
 	 * @returns {Promise<void>}
 	 */
@@ -111,6 +117,18 @@ export function createHardtacks<I extends HardtackInput>(
 			async has(config?: GetCookieConfig) {
 				const { cookies } = getRequestEvent();
 				return cookies.get(key, config) != null;
+			},
+			async hasValid(config?: GetCookieConfig) {
+				const { cookies } = getRequestEvent();
+
+				const unsafeValue = cookies.get(key, config);
+				if (unsafeValue == null) return false;
+
+				const result = await read['~standard'].validate(await decrypt(unsafeValue));
+
+				if (result.issues) return false;
+
+				return result.value != null;
 			},
 			async delete(config?: CookieConfig) {
 				const { cookies } = getRequestEvent();
