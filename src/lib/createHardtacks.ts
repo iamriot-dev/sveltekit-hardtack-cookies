@@ -79,7 +79,7 @@ export function createHardtacks<I extends HardtackInput>(
 	defaultCookieConfig: CookieConfig,
 	encryption?: {
 		encrypt: (value: string) => Promise<string> | string;
-		decrypt: (value: string) => Promise<string> | string;
+		decrypt: (value: string) => Promise<string | null | undefined> | string | null | undefined;
 	}
 ): HardtacksBox<I> {
 	const base: Record<string, Hardtack<unknown>> = {};
@@ -95,7 +95,7 @@ export function createHardtacks<I extends HardtackInput>(
 				const { cookies } = getRequestEvent();
 
 				const unsafeValue = cookies.get(key, config);
-				if (!unsafeValue) return fallback;
+				if (unsafeValue == null) return fallback;
 
 				const result = await read['~standard'].validate(await decrypt(unsafeValue));
 
